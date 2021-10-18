@@ -4,6 +4,8 @@ Official PyTorch implementation of [*Attention-Free Keyword Spotting*](https://a
 
 <img src="resources/kw-mlp.png" alt="Keyword-MLP Architecture" width="400"/>
 
+<a href="https://colab.research.google.com/github/AI-Research-BD/Keyword-MLP/blob/main/notebooks/keyword_mlp_tutorial.ipynb" target="_parent"><img src="https://colab.research.google.com/assets/colab-badge.svg" alt="Open in Colab"/></a>
+
 ## Setup
 
 ```
@@ -33,11 +35,8 @@ Running `train.py` is fairly straightforward. Only a path to a config file is re
 python train.py --conf path/to/config.yaml
 ```
 
-Refer to the [example config](sample_configs/base_config.yaml) to see how the config file looks like, and see the [config explanation](docs/config_file_explained.md) for a complete rundown of the various config parameters.
+Refer to the [example config](sample_configs/base_config.yaml) to see how the config file looks like, and see the [config explanation](docs/config_file_explained.md) for a complete rundown of the various config parameters. You may also take a look at the [colab tutorial](#tutorials) for a live example.
 
-## Weights & Biases
-
-You can optionally log your training runs with [wandb](https://wandb.ai/site). You may provide a path to a file containing your API key, or use the `WANDB_API_KEY` env variable, or simply provide it manually from a login prompt when you start your training.
 
 ## Inference
 
@@ -67,6 +66,17 @@ python inference.py --conf sample_configs/base_config.yaml \
                     --mode multi
 ```
 
+For a detailed usage example, check the [colab tutorial](#tutorials).
+
+## Tutorials
+- [Tutorial: [Using pretrained model | Inference scripts | Training]](notebooks/keyword_mlp_tutorial.ipynb)
+    - <a href="https://colab.research.google.com/github/AI-Research-BD/Keyword-MLP/blob/main/notebooks/keyword_mlp_tutorial.ipynb" target="_parent"><img src="https://colab.research.google.com/assets/colab-badge.svg" alt="Open in Colab"/></a>
+
+## Weights & Biases
+
+You can optionally log your training runs with [wandb](https://wandb.ai/site). You may provide a path to a file containing your API key, or use the `WANDB_API_KEY` env variable, or simply provide it manually from a login prompt when you start your training.
+
+<img src="resources/wandb.png" alt="W&B Dashboard" width="700"/>
 
 ## Pretrained Checkpoints
 
