@@ -35,6 +35,10 @@ python train.py --conf path/to/config.yaml
 
 Refer to the [example config](sample_configs/base_config.yaml) to see how the config file looks like, and see the [config explanation](docs/config_file_explained.md) for a complete rundown of the various config parameters.
 
+## Weights & Biases
+
+You can optionally log your training runs with [wandb](https://wandb.ai/site). You may provide a path to a file containing your API key, or use the `WANDB_API_KEY` env variable, or simply provide it manually from a login prompt when you start your training.
+
 ## Inference
 
 You can use the pre-trained model (or a model you trained) for inference, using the two scripts:
@@ -63,12 +67,22 @@ python inference.py --conf sample_configs/base_config.yaml \
                     --mode multi
 ```
 
-## Weights & Biases
-
-You can optionally log your training runs with [wandb](https://wandb.ai/site). You may provide a path to a file containing your API key, or use the `WANDB_API_KEY` env variable, or simply provide it manually from a login prompt when you start your training.
 
 ## Pretrained Checkpoints
 
-| Model Name | Accuracy (V2-35) | Link |
-| ---------- | ---------------- | ---- |
-| KW-MLP     |       97.56      |  --  |
+| Model Name | # Params | GFLOPS | Accuracy (V2-35) | Link |
+| ---------- | -------- | ------ | ---------------- | ---- |
+| KW-MLP     |   424K   | 0.045  |       97.56      |  [kw-mlp (1.7MB)](https://drive.google.com/uc?id=1lywXTaJjPud41f3G_NmuRHzhDY8uNbWe&export=download)  |
+
+## Citation
+
+```bibtex
+@misc{morshed2021attentionfree,
+      title   = {Attention-Free Keyword Spotting}, 
+      author  = {Mashrur M. Morshed and Ahmad Omar Ahsan},
+      year    = {2021},
+      eprint  = {2110.07749},
+      archivePrefix = {arXiv},
+      primaryClass  = {cs.LG}
+}
+```
