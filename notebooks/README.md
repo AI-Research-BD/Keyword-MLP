@@ -1,13 +1,4 @@
-# TF implementation of Keyword-Mixer
+# Notebooks
 
-## Download Google speech v2 dataset
-
-```
-wget https://storage.googleapis.com/download.tensorflow.org/data/speech_commands_v0.02.tar.gz
-mkdir data
-mv ./speech_commands_v0.02.tar.gz ./data
-cd ./data
-tar -xf ./speech_commands_v0.02.tar.gz
-cd ../
-```
-
+- [Keyword-MLP Tutorial](keyword_mlp_tutorial.ipynb): Shows a complete example of training and inference (with pretrained model) with the Keyword-MLP repository.
+- [MLP-Mixer-Audio](mlp-mixer-audio.ipynb): Contains a TensorFlow implementation of MLP-Mixer which works with audio, which we mention in our ablation studies.
