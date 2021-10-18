@@ -18,7 +18,7 @@ label_map: ./data/label_map.json             # A json file containing {id: label
 ```
 exp:
     wandb: False                           # Whether to use wandb or not
-    wandb_api_key: <path/to/api/key>       # Path to your key. Ignored if wandb is False.
+    wandb_api_key: <path/to/api/key>       # Path to your key. Ignored if wandb is False. If blank, looks for key in the ${WANDB_API_KEY} env variable.
     proj_name: torch-kw-mlp                # Name of your wandb project. Ignored if wandb is False.
     exp_dir: ./runs                        # Your checkpoints will be saved locally at exp_dir/exp_name
     exp_name: kw-mlp-0.1.0                 # ..for example, ./runs/kw-mlp-0.1.0/something.pth
