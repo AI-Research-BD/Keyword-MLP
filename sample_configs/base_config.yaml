@@ -32,6 +32,22 @@ hparams:
     n_epochs: 140
     l_smooth: 0.1
 
+    distill:
+        ckpt:
+        model:
+            type: kw-mlp 
+            input_res: [40, 98]
+            patch_res: [40, 1]
+            num_classes: 35
+            channels: 1
+            dim: 64
+            depth: 12
+            pre_norm: False
+            prob_survival: 0.9
+        alpha: 0.5
+        max_T: 1000.0
+        T_epochs: 120
+
     audio:
         sr: 16000
         n_mels: 40
