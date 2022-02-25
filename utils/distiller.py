@@ -53,13 +53,13 @@ def update_temperature(step: int, max_steps: int, max_T: float, min_T: float = 1
         min_T (float, optional): Minimum temperature value. Defaults to 1.0. (At 1, T has no effect on softmax)
 
     Returns:
-        _type_: _description_
+        T (float): Updated temperature value.
     """
     if step >= max_steps:
         return min_T
     else:
         cos_val = math.cos((math.pi * (step % max_steps)) / max_steps)
-        return max((max_T / 2) * (cos_val + 1), min_T)
+        return min_T + ((max_T - min_T) / 2) * (cos_val + 1)
 
 
 def distill(student: nn.Module, teacher:nn.Module, optimizer: optim.Optimizer, criterion: Callable, trainloader: DataLoader, valloader: DataLoader, schedulers: dict, config: dict) -> None:
@@ -90,6 +90,7 @@ def distill(student: nn.Module, teacher:nn.Module, optimizer: optim.Optimizer, c
     alpha = distill_params["alpha"]
     max_T = distill_params["max_T"]
     T_epochs = distill_params["T_epochs"]
+    T = max_T
 
     student.train()
     teacher.eval()
@@ -98,8 +99,9 @@ def distill(student: nn.Module, teacher:nn.Module, optimizer: optim.Optimizer, c
 
     for epoch in range(config["hparams"]["start_epoch"], config["hparams"]["n_epochs"]):
         t0 = time.time()
-        running_loss = 0.0
-        correct = 0
+        running_loss, correct = 0.0, 0
+        if epoch > T_epochs:
+            T = 1
 
         for data, targets in trainloader:
 
@@ -109,11 +111,13 @@ def distill(student: nn.Module, teacher:nn.Module, optimizer: optim.Optimizer, c
             elif schedulers["scheduler"] != None and epoch < config["hparams"]["scheduler"]["max_epochs"]:
                 schedulers["scheduler"].step()
 
+            if distill_params["anneal"]:
+                T = update_temperature(step, T_epochs * n_batches, max_T)
+
             ####################
             # optimization step
             ####################
 
-            T = update_temperature(step, T_epochs * n_batches, max_T)
             loss, corr = distill_single_batch(student, teacher, alpha, T, data, targets, optimizer, criterion, device)
             running_loss += loss
             correct += corr

@@ -44,9 +44,10 @@ hparams:
             depth: 12
             pre_norm: False
             prob_survival: 0.9
-        alpha: 0.5
-        max_T: 1000.0
-        T_epochs: 120
+        alpha: 0.95
+        max_T: 5.0
+        T_epochs: 140
+        anneal: True
 
     audio:
         sr: 16000
@@ -63,7 +64,7 @@ hparams:
         num_classes: 35
         channels: 1
         dim: 64
-        depth: 12
+        depth: 4
         pre_norm: False
         prob_survival: 0.9
 
@@ -79,17 +80,6 @@ hparams:
         scheduler_type: cosine_annealing
 
     augment:
-        # resample:
-            # r_min: 0.85
-            # r_max: 1.15
-        
-        # time_shift:
-            # s_min: -0.1
-            # s_max: 0.1
-
-        # bg_noise:
-            # bg_folder: ./data/bg_folder/
-
         spec_aug:
             n_time_masks: 2
             time_mask_width: 25
