@@ -77,7 +77,7 @@ def training_pipeline(config):
     print(f"Created teacher model with {count_params(teacher)} parameters.")
 
     teacher.load_state_dict(torch.load(config["hparams"]["distill"]["ckpt"])["model_state_dict"])
-    set_grad_state(teacher, "False")
+    set_grad_state(teacher, False)
     teacher.eval()
     print("Restored and froze teacher weights.")
 

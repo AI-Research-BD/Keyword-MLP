@@ -58,6 +58,7 @@ class KDLoss(nn.Module):
             num_classes (int): Number of target classes.
             dim (int, optional): Dimension across which to apply loss. Defaults to -1.
         """
+        super().__init__()
         
         self.cls = num_classes
         self.dim = dim
