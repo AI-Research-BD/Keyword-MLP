@@ -50,6 +50,7 @@ def main(args):
         data_list = [args.inp]
 
     dataset = GoogleSpeechDataset(
+        root = "",
         data_list=data_list,
         label_map=None,
         audio_settings=config["hparams"]["audio"],
