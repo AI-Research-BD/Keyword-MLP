@@ -16,6 +16,6 @@ wget http://download.tensorflow.org/data/speech_commands_test_set_v0.01.tar.gz -
 
 cd $WORKING_DIR
 
-python data_prep/prep/make_v1_12.py --root $ROOT/speech_commands_v1_12/ --test $ROOT/speech_commands_v1_12_test/
+python data_prep/helpers/make_v1_12.py --root $ROOT/speech_commands_v1_12/ --test $ROOT/speech_commands_v1_12_test/
 
 rm -r $ROOT/speech_commands_v1_12_test/

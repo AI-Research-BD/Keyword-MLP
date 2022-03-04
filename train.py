@@ -1,5 +1,5 @@
 from argparse import ArgumentParser
-from config_parser import get_config
+from utils.config_parser import get_config
 
 from utils.loss import LabelSmoothingLoss
 from utils.opt import get_optimizer

@@ -1,7 +1,7 @@
 """Run inference on short ~1s clips, like the ones in the Speech Commands dataset."""
 
 from argparse import ArgumentParser
-from config_parser import get_config
+from utils.config_parser import get_config
 import torch
 from torch.utils.data import DataLoader
 from utils.misc import get_model

@@ -2,7 +2,7 @@
 
 
 from argparse import ArgumentParser
-from config_parser import get_config
+from utils.config_parser import get_config
 import torch
 import numpy as np
 import librosa
