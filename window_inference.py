@@ -15,7 +15,7 @@ import json
 
 
 def process_window(x, sr, audio_settings):
-    x = librosa.util.fix_length(x, sr)
+    x = librosa.util.fix_length(x, size=sr)
     x = librosa.feature.melspectrogram(y=x, **audio_settings)        
     x = librosa.feature.mfcc(S=librosa.power_to_db(x), n_mfcc=audio_settings["n_mels"])
     return x
