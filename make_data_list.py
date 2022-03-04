@@ -27,6 +27,9 @@ if __name__ == "__main__":
     parser = ArgumentParser()
     parser.add_argument("-v", "--val_list_file", type=str, required=True, help="Path to validation_list.txt.")
     parser.add_argument("-t", "--test_list_file", type=str, required=True, help="Path to test_list.txt.")
+    parser.add_argument("-s_train", "--train_silence_list_file", type=str, required=True, help="Path to training_silence.txt.")
+    parser.add_argument("-s_val", "--train_silence_list_file", type=str, required=True, help="Path to validation_silence.txt.")
+    
     parser.add_argument("-d", "--data_root", type=str, required=True, help="Root directory of speech commands v2 dataset.")
     parser.add_argument("-o", "--out_dir", type=str, required=True, help="Output directory for data lists and label map.")
     args = parser.parse_args()
