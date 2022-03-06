@@ -66,12 +66,15 @@ def get_train_val_test_split(root: str, val_file: str, test_file: str):
 class GoogleSpeechDataset(Dataset):
     """Dataset wrapper for Google Speech Commands V2."""
     
-    def __init__(self, data_list: list, audio_settings: dict, label_map: dict = None, aug_settings: dict = None, cache: int = 0):
+    def __init__(self, root: str, data_list: list, audio_settings: dict, label_map: dict = None, aug_settings: dict = None, cache: int = 0):
         super().__init__()
 
         self.audio_settings = audio_settings
         self.aug_settings = aug_settings
         self.cache = cache
+
+        if root != "":
+            data_list = list(map(lambda a: os.path.join(root, *a.split("/")[-2:]), data_list))
 
         if cache:
             print("Caching dataset into memory.")
@@ -80,11 +83,9 @@ class GoogleSpeechDataset(Dataset):
             self.data_list = data_list
             
         # labels: if no label map is provided, will not load labels. (Use for inference)
-        if label_map is not None:
-            self.label_list = []
+        if label_map != None:
             label_2_idx = {v: int(k) for k, v in label_map.items()}
-            for path in data_list:
-                self.label_list.append(label_2_idx[path.split("/")[-2]])
+            self.label_list = [label_2_idx[path.split("/")[-2]] for path in data_list]
         else:
             self.label_list = None
         
@@ -205,6 +206,7 @@ def get_loader(data_list, config, train=True):
         label_map = json.load(f)
 
     dataset = GoogleSpeechDataset(
+        root=config["data_root"],
         data_list=data_list,
         label_map=label_map,
         audio_settings=config["hparams"]["audio"],
