@@ -26,8 +26,3 @@ def get_config(config_file: str) -> dict:
         base_config["hparams"]["device"] = base_config["exp"]["device"]
 
     return base_config
-
-
-if __name__ == "__main__":
-    config = get_config(sys.argv[1])
-    print("Using settings:\n", yaml.dump(config))
