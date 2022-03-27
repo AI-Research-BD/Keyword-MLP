@@ -6,3 +6,4 @@ data/
 runs/
 wandb/
 notes.txt
+tests
