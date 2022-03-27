@@ -11,12 +11,31 @@ import shutil
 import soundfile as sf
 
 
-def delete_files_from_list(file_list):
+def delete_files_from_list(file_list: list) -> None:
+    """Deletes files from a list of file paths.
+
+    Args:
+        file_list (list): File paths.
+    """
     for path in file_list:
         os.remove(path)
 
 
-def make_unknown(data_list, unknown_perc, silence_perc, label_map, root):
+def make_unknown(data_list: list, unknown_perc: float, silence_perc: float, label_map: dict, root: str):
+    """Produces unknown.
+
+    Args:
+        data_list (list): List of files.
+        unknown_perc (float): Percentage of unknown in range [0., 1.]
+        silence_perc (float): Percentage of silence in range [0., 1.]
+        label_map (dict): Index to class mapping.
+        root (str): Dataset root directory, where new _unknown_ folder will be made.
+
+    Returns:
+        data_list (list): List of known class files + unknown class files (their new paths under _unknown_).
+        num_total_data (int): Projected size of full dataset with silence and unknown samples.
+    """
+    
     known_list, unknown_list, unknown_class_list = [], [], []
     for file_path in data_list:
         classname = file_path.split("/")[-2]

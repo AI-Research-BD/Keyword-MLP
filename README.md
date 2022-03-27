@@ -13,26 +13,21 @@ pip install -r requirements.txt
 ```
 
 ## Dataset
-To download the Google Speech Commands V2 dataset, you may run the provided bash script as below. This would download and extract the dataset to the "destination path" provided.
+To download and prepare the Google Speech Commands datasets (V1-12 and V2-35), you may run the provided bash scripts as shown below:
 
+```bash
+dataset_version="v2_35"    # or "v1_10"
+sh ./data_prep/scripts/prepare_${dataset_version}.sh <destination_path>
 ```
-sh ./download_gspeech_v2.sh <destination_path>
-```
+
+This downloads and arranges the data into the provided destination, and also produces the three files: `training_list.txt`, `validation_list.txt`, `testing_list.txt`.
 
 ## Training
-
-The Speech Commands V2 dataset provides two files: `validation_list.txt` and `testing_list.txt`. Run:
-
-```
-python make_data_list.py -v <path/to/validation_list.txt> -t <path/to/testing_list.txt> -d <path/to/dataset/root> -o <output dir>
-```
-
-This will create the files `training_list.txt`, `validation_list.txt`, `testing_list.txt` and `label_map.json` at the specified output directory. 
 
 Running `train.py` is fairly straightforward. Only a path to a config file is required. Inside the config file, you'll need to add the paths to the .txt files and the label_map.json file created above.
 
 ```
-python train.py --conf path/to/config.yaml
+python train.py --conf <path/to/config.yaml>
 ```
 
 Refer to the [example config](sample_configs/base_config.yaml) to see how the config file looks like, and see the [config explanation](docs/config_file_explained.md) for a complete rundown of the various config parameters. You may also take a look at the [colab tutorial](#tutorials) for a live example.
