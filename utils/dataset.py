@@ -206,7 +206,7 @@ def get_loader(data_list, config, train=True):
         label_map = json.load(f)
 
     dataset = GoogleSpeechDataset(
-        root = config["data_root"],
+        root=config["data_root"],
         data_list=data_list,
         label_map=label_map,
         audio_settings=config["hparams"]["audio"],

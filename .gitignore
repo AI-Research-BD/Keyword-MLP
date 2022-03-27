@@ -5,5 +5,5 @@ configs/
 data/
 runs/
 wandb/
-tests
+tests/
 notes.txt

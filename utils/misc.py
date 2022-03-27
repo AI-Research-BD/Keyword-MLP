@@ -125,3 +125,12 @@ def save_model(epoch: int, val_acc: float, save_path: str, net: nn.Module, optim
         with open(log_file, "a+") as f:
             f.write(log_message + "\n")
     
+def set_grad_state(model: nn.Module, state: bool) -> None:
+    """Freezes or unfreezes model weights.
+
+    Args:
+        model (nn.Module): Model instance.
+        state (bool): State for requires_grad.
+    """
+    for p in model.parameters():
+        p.requires_grad = state
