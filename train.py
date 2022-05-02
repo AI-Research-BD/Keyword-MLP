@@ -163,6 +163,7 @@ def main(args):
             wandb.login()
 
         with wandb.init(
+            entity=config["exp"]["entity"],
             project=config["exp"]["proj_name"],
             name=config["exp"]["exp_name"],
             config=config["hparams"],
