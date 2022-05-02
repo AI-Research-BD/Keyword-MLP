@@ -180,7 +180,7 @@ class GoogleSpeechDataset(Dataset):
             if "spec_aug" in self.aug_settings:
                 x = spec_augment(x, **self.aug_settings["spec_aug"])
 
-        x = torch.from_numpy(x).float().unsqueeze(0)
+        x = torch.from_numpy(x).float()
         return x
 
 
