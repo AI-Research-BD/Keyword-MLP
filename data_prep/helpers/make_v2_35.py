@@ -5,7 +5,9 @@ import os
 
 def main(args):
 
-    train_list, val_list, test_list, _ = get_train_val_test_split(args.data_root, args.val_list_file, args.test_list_file)
+    train_list, val_list, test_list, _ = get_train_val_test_split(
+        args.data_root, args.val_list_file, args.test_list_file
+    )
 
     with open(os.path.join(args.out_dir, "training_list.txt"), "w+") as f:
         f.write("\n".join(train_list))
@@ -17,14 +19,34 @@ def main(args):
         f.write("\n".join(test_list))
 
     print("Saved data lists.")
-    
+
 
 if __name__ == "__main__":
     parser = ArgumentParser()
-    parser.add_argument("-v", "--val_list_file", type=str, required=True, help="Path to validation_list.txt.")
-    parser.add_argument("-t", "--test_list_file", type=str, required=True, help="Path to test_list.txt.")
-    parser.add_argument("-d", "--data_root", type=str, required=True, help="Root directory of speech commands v2 dataset.")
-    parser.add_argument("-o", "--out_dir", type=str, required=True, help="Output directory for data lists and label map.")
+    parser.add_argument(
+        "-v",
+        "--val_list_file",
+        type=str,
+        required=True,
+        help="Path to validation_list.txt.",
+    )
+    parser.add_argument(
+        "-t", "--test_list_file", type=str, required=True, help="Path to test_list.txt."
+    )
+    parser.add_argument(
+        "-d",
+        "--data_root",
+        type=str,
+        required=True,
+        help="Root directory of speech commands v2 dataset.",
+    )
+    parser.add_argument(
+        "-o",
+        "--out_dir",
+        type=str,
+        required=True,
+        help="Output directory for data lists and label map.",
+    )
     args = parser.parse_args()
 
     main(args)
