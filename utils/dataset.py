@@ -20,19 +20,23 @@ def get_train_val_test_split(root: str, val_file: str, test_file: str):
         root (str): Path to base directory of the dataset.
         val_file (str): Path to file containing list of validation data files.
         test_file (str): Path to file containing list of test data files.
-    
+
     Returns:
         train_list (list): List of paths to training data items.
         val_list (list): List of paths to validation data items.
         test_list (list): List of paths to test data items.
         label_map (dict): Mapping of indices to label classes.
     """
-    
+
     ####################
     # Labels
     ####################
 
-    label_list = [label for label in sorted(os.listdir(root)) if os.path.isdir(os.path.join(root, label)) and label[0] != "_"]
+    label_list = [
+        label
+        for label in sorted(os.listdir(root))
+        if os.path.isdir(os.path.join(root, label)) and label[0] != "_"
+    ]
     label_map = {idx: label for idx, label in enumerate(label_list)}
 
     ###################
@@ -42,20 +46,30 @@ def get_train_val_test_split(root: str, val_file: str, test_file: str):
     all_files_set = set()
     for label in label_list:
         all_files_set.update(set(glob.glob(os.path.join(root, label, "*.wav"))))
-    
+
     with open(val_file, "r") as f:
-        val_files_set = set(map(lambda a: os.path.join(root, a), f.read().rstrip("\n").split("\n")))
-    
+        val_files_set = set(
+            map(lambda a: os.path.join(root, a), f.read().rstrip("\n").split("\n"))
+        )
+
     with open(test_file, "r") as f:
-        test_files_set = set(map(lambda a: os.path.join(root, a), f.read().rstrip("\n").split("\n"))) 
-    
-    assert len(val_files_set.intersection(test_files_set)) == 0, "Sanity check: No files should be common between val and test."
-    
+        test_files_set = set(
+            map(lambda a: os.path.join(root, a), f.read().rstrip("\n").split("\n"))
+        )
+
+    assert (
+        len(val_files_set.intersection(test_files_set)) == 0
+    ), "Sanity check: No files should be common between val and test."
+
     all_files_set -= val_files_set
     all_files_set -= test_files_set
-    
-    train_list, val_list, test_list = list(all_files_set), list(val_files_set), list(test_files_set)
-    
+
+    train_list, val_list, test_list = (
+        list(all_files_set),
+        list(val_files_set),
+        list(test_files_set),
+    )
+
     print(f"Number of training samples: {len(train_list)}")
     print(f"Number of validation samples: {len(val_list)}")
     print(f"Number of test samples: {len(test_list)}")
@@ -65,8 +79,16 @@ def get_train_val_test_split(root: str, val_file: str, test_file: str):
 
 class GoogleSpeechDataset(Dataset):
     """Dataset wrapper for Google Speech Commands V2."""
-    
-    def __init__(self, root: str, data_list: list, audio_settings: dict, label_map: dict = None, aug_settings: dict = None, cache: int = 0) -> None:
+
+    def __init__(
+        self,
+        root: str,
+        data_list: list,
+        audio_settings: dict,
+        label_map: dict = None,
+        aug_settings: dict = None,
+        cache: int = 0,
+    ) -> None:
         super().__init__()
 
         self.audio_settings = audio_settings
@@ -74,30 +96,33 @@ class GoogleSpeechDataset(Dataset):
         self.cache = cache
 
         if root != "":
-            data_list = list(map(lambda a: os.path.join(root, *a.split("/")[-2:]), data_list))
+            data_list = list(
+                map(lambda a: os.path.join(root, *a.split("/")[-2:]), data_list)
+            )
 
         if cache:
             print("Caching dataset into memory.")
-            self.data_list = init_cache(data_list, audio_settings["sr"], cache, audio_settings)
+            self.data_list = init_cache(
+                data_list, audio_settings["sr"], cache, audio_settings
+            )
         else:
             self.data_list = data_list
-            
+
         # labels: if no label map is provided, will not load labels. (Use for inference)
         if label_map != None:
             label_2_idx = {v: int(k) for k, v in label_map.items()}
             self.label_list = [label_2_idx[path.split("/")[-2]] for path in data_list]
         else:
             self.label_list = None
-        
 
         if aug_settings is not None:
             if "bg_noise" in self.aug_settings:
-                self.bg_adder = AddBackgroundNoise(sounds_path=aug_settings["bg_noise"]["bg_folder"])
-
+                self.bg_adder = AddBackgroundNoise(
+                    sounds_path=aug_settings["bg_noise"]["bg_folder"]
+                )
 
     def __len__(self):
         return len(self.data_list)
-
 
     def __getitem__(self, idx):
         if self.cache:
@@ -113,12 +138,11 @@ class GoogleSpeechDataset(Dataset):
         else:
             return x
 
-
     def transform(self, x):
         """Applies necessary preprocessing to audio.
         Args:
             x (np.ndarray) - Input waveform; array of shape (n_samples, ).
-        
+
         Returns:
             x (torch.FloatTensor) - MFCC matrix of shape (n_mfcc, T).
         """
@@ -126,7 +150,7 @@ class GoogleSpeechDataset(Dataset):
         sr = self.audio_settings["sr"]
 
         ###################
-        # Waveform 
+        # Waveform
         ###################
 
         if self.cache < 2:
@@ -139,36 +163,48 @@ class GoogleSpeechDataset(Dataset):
 
                 if "resample" in self.aug_settings:
                     x, _ = resample(x, sr, **self.aug_settings["resample"])
-            
+
             x = librosa.util.fix_length(x, size=sr)
 
             ###################
             # Spectrogram
             ###################
-        
-            x = librosa.feature.melspectrogram(y=x, **self.audio_settings)        
-            x = librosa.feature.mfcc(S=librosa.power_to_db(x), n_mfcc=self.audio_settings["n_mels"])
-            x = x.T # (F, T) -> (T, F)
-        
+
+            x = librosa.feature.melspectrogram(y=x, **self.audio_settings)
+            x = librosa.feature.mfcc(
+                S=librosa.power_to_db(x), n_mfcc=self.audio_settings["n_mels"]
+            )
+            x = x.T  # (F, T) -> (T, F)
+
         if self.aug_settings is not None:
             if "spec_aug" in self.aug_settings:
                 x = spec_augment(x, **self.aug_settings["spec_aug"])
-        
+
         x = torch.from_numpy(x).float().unsqueeze(0)
         return x
 
 
-def cache_item_loader(path: str, sr: int, cache_level: int, audio_settings: dict) -> np.ndarray:
+def cache_item_loader(
+    path: str, sr: int, cache_level: int, audio_settings: dict
+) -> np.ndarray:
     x = librosa.load(path, sr)[0]
     if cache_level == 2:
         x = librosa.util.fix_length(x, size=sr)
-        x = librosa.feature.melspectrogram(y=x, **audio_settings)        
-        x = librosa.feature.mfcc(S=librosa.power_to_db(x), n_mfcc=audio_settings["n_mels"])
-        x = x.T # (F, T) -> (T, F)
+        x = librosa.feature.melspectrogram(y=x, **audio_settings)
+        x = librosa.feature.mfcc(
+            S=librosa.power_to_db(x), n_mfcc=audio_settings["n_mels"]
+        )
+        x = x.T  # (F, T) -> (T, F)
     return x
 
 
-def init_cache(data_list: list, sr: int, cache_level: int, audio_settings: dict, n_cache_workers: int = 4) -> list:
+def init_cache(
+    data_list: list,
+    sr: int,
+    cache_level: int,
+    audio_settings: dict,
+    n_cache_workers: int = 4,
+) -> list:
     """Loads entire dataset into memory for later use.
     Args:
         data_list (list): List of data items.
@@ -180,13 +216,17 @@ def init_cache(data_list: list, sr: int, cache_level: int, audio_settings: dict,
     """
 
     cache = []
-    loader_fn = functools.partial(cache_item_loader, sr=sr, cache_level=cache_level, audio_settings=audio_settings)
+    loader_fn = functools.partial(
+        cache_item_loader, sr=sr, cache_level=cache_level, audio_settings=audio_settings
+    )
 
     pool = mp.Pool(n_cache_workers)
 
-    for audio in tqdm(pool.imap(func=loader_fn, iterable=data_list), total=len(data_list)):
+    for audio in tqdm(
+        pool.imap(func=loader_fn, iterable=data_list), total=len(data_list)
+    ):
         cache.append(audio)
-    
+
     pool.close()
     pool.join()
 
@@ -198,11 +238,11 @@ def get_loader(data_list, config, train=True):
     Args:
         config (dict): Dict containing various settings for the training run.
         train (bool): Training or evaluation mode.
-        
+
     Returns:
         dataloader (DataLoader): DataLoader wrapper for training/validation/test data.
     """
-    
+
     with open(config["label_map"], "r") as f:
         label_map = json.load(f)
 
@@ -212,7 +252,7 @@ def get_loader(data_list, config, train=True):
         label_map=label_map,
         audio_settings=config["hparams"]["audio"],
         aug_settings=config["hparams"]["augment"] if train else None,
-        cache=config["exp"]["cache"]
+        cache=config["exp"]["cache"],
     )
 
     dataloader = DataLoader(
@@ -220,7 +260,7 @@ def get_loader(data_list, config, train=True):
         batch_size=config["hparams"]["batch_size"],
         num_workers=config["exp"]["n_workers"],
         pin_memory=config["exp"]["pin_memory"],
-        shuffle=True if train else False
+        shuffle=True if train else False,
     )
 
     return dataloader

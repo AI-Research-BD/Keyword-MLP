@@ -19,10 +19,14 @@ def get_config(config_file: str) -> dict:
 
     if base_config["exp"]["wandb"]:
         if base_config["exp"]["wandb_api_key"] is not None:
-            assert os.path.exists(base_config["exp"]["wandb_api_key"]), f"API key file not found at specified location {base_config['exp']['wandb_api_key']}."
+            assert os.path.exists(
+                base_config["exp"]["wandb_api_key"]
+            ), f"API key file not found at specified location {base_config['exp']['wandb_api_key']}."
 
     if base_config["exp"]["device"] == "auto":
-        base_config["exp"]["device"] = torch.device("cuda" if torch.cuda.is_available() else "cpu")
+        base_config["exp"]["device"] = torch.device(
+            "cuda" if torch.cuda.is_available() else "cpu"
+        )
         base_config["hparams"]["device"] = base_config["exp"]["device"]
 
     return base_config

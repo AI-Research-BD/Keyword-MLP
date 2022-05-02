@@ -5,7 +5,7 @@ import torch.nn.functional as F
 
 class LabelSmoothingLoss(nn.Module):
     """Cross Entropy with Label Smoothing.
-    
+
     Attributes:
         num_classes (int): Number of target classes.
         smoothing (float, optional): Smoothing fraction constant, in the range (0.0, 1.0). Defaults to 0.1.
@@ -21,7 +21,7 @@ class LabelSmoothingLoss(nn.Module):
             dim (int, optional): Dimension across which to apply loss. Defaults to -1.
         """
         super().__init__()
-        
+
         self.confidence = 1.0 - smoothing
         self.smoothing = smoothing
         self.cls = num_classes
@@ -37,7 +37,6 @@ class LabelSmoothingLoss(nn.Module):
         Returns:
             torch.Tensor: Loss.
         """
-
         assert 0 <= self.smoothing < 1
         pred = pred.log_softmax(dim=self.dim)
 
@@ -59,11 +58,18 @@ class KDLoss(nn.Module):
             dim (int, optional): Dimension across which to apply loss. Defaults to -1.
         """
         super().__init__()
-        
+
         self.cls = num_classes
         self.dim = dim
 
-    def forward(self, pred: torch.Tensor, target: torch.Tensor, teacher_pred: torch.Tensor, alpha: float, T: float) -> torch.Tensor:
+    def forward(
+        self,
+        pred: torch.Tensor,
+        target: torch.Tensor,
+        teacher_pred: torch.Tensor,
+        alpha: float,
+        T: float,
+    ) -> torch.Tensor:
         """Forward method for KDLoss.
 
         Args:
@@ -81,9 +87,7 @@ class KDLoss(nn.Module):
         teacher_pred_log_probs = F.log_softmax(teacher_pred / T, dim=self.dim)
 
         kldiv = F.kl_div(pred_log_probs, teacher_pred_log_probs, log_target=True)
-        
+
         crossentropy = F.cross_entropy(pred, target)
 
         return (alpha * T * T) * kldiv + (1.0 - alpha) * crossentropy
-
-        
