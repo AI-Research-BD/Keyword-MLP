@@ -48,7 +48,7 @@ def spec_augment(mel_spec: np.ndarray, n_time_masks: int, time_mask_width: int, 
     """Numpy implementation of spectral augmentation.
 
     Args:
-        mel_spec (np.ndarray): Mel spectrogram, array of shape (n_mels, T).
+        mel_spec (np.ndarray): Mel spectrogram, array of shape (T, n_mels).
         n_time_masks (int): Number of time bands.   
         time_mask_width (int): Max width of each time band.
         n_freq_masks (int): Number of frequency bands.
@@ -60,13 +60,13 @@ def spec_augment(mel_spec: np.ndarray, n_time_masks: int, time_mask_width: int, 
     
     offset, begin = 0, 0
 
-    for _ in range(n_time_masks):
-        offset = np.random.randint(0, time_mask_width)
+    for _ in range(n_freq_masks):
+        offset = np.random.randint(0, freq_mask_width)
         begin = np.random.randint(0, mel_spec.shape[1] - offset)
         mel_spec[:, begin: begin + offset] = 0.0
     
-    for _ in range(n_freq_masks):
-        offset = np.random.randint(0, freq_mask_width)
+    for _ in range(n_time_masks):
+        offset = np.random.randint(0, time_mask_width)
         begin = np.random.randint(0, mel_spec.shape[0] - offset)
         mel_spec[begin: begin + offset, :] = 0.0
 

@@ -66,7 +66,7 @@ def get_train_val_test_split(root: str, val_file: str, test_file: str):
 class GoogleSpeechDataset(Dataset):
     """Dataset wrapper for Google Speech Commands V2."""
     
-    def __init__(self, root: str, data_list: list, audio_settings: dict, label_map: dict = None, aug_settings: dict = None, cache: int = 0):
+    def __init__(self, root: str, data_list: list, audio_settings: dict, label_map: dict = None, aug_settings: dict = None, cache: int = 0) -> None:
         super().__init__()
 
         self.audio_settings = audio_settings
@@ -148,12 +148,12 @@ class GoogleSpeechDataset(Dataset):
         
             x = librosa.feature.melspectrogram(y=x, **self.audio_settings)        
             x = librosa.feature.mfcc(S=librosa.power_to_db(x), n_mfcc=self.audio_settings["n_mels"])
-
-
+            x = x.T # (F, T) -> (T, F)
+        
         if self.aug_settings is not None:
             if "spec_aug" in self.aug_settings:
                 x = spec_augment(x, **self.aug_settings["spec_aug"])
-
+        
         x = torch.from_numpy(x).float().unsqueeze(0)
         return x
 
@@ -164,6 +164,7 @@ def cache_item_loader(path: str, sr: int, cache_level: int, audio_settings: dict
         x = librosa.util.fix_length(x, size=sr)
         x = librosa.feature.melspectrogram(y=x, **audio_settings)        
         x = librosa.feature.mfcc(S=librosa.power_to_db(x), n_mfcc=audio_settings["n_mels"])
+        x = x.T # (F, T) -> (T, F)
     return x
 
 
