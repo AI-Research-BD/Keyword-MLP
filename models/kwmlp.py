@@ -37,7 +37,13 @@ class KW_MLP(nn.Module):
         dim_proj = dim * proj_mult
         Norm = PreNorm if pre_norm else PostNorm
 
-        self.to_freq_embed = nn.Linear(F, dim)
+        #self.to_freq_embed = nn.Linear(F, dim)
+
+        self.to_freq_embed = nn.Sequential(
+            Rearrange("b t f -> b f t"),
+            nn.Conv1d(F, dim, 3, 1, 1),
+            Rearrange("b f t -> b t f")
+        )
 
         self.layers = nn.ModuleList(
             [
